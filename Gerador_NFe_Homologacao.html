@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador XML - NF-e (Homologação)</title>
+<style>
+:root{--primary:#1769e0;--primary-dark:#1257be;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085;--border:#dfe6ef;--success:#159a68;--success-bg:#effaf5;--danger:#dc3545;--danger-bg:#fff1f2;--info-bg:#eef5ff;--shadow:0 4px 18px rgba(15,35,70,.06)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.container{max-width:1280px;margin:auto;padding:24px 24px 34px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:18px;padding:4px 2px}
+.brand{display:flex;align-items:center;gap:14px}.brand-icon{width:48px;height:48px;border:3px solid var(--primary);border-radius:10px;display:grid;place-items:center;color:var(--primary);font-size:25px;background:#fff}.brand-copy h1{margin:0 0 3px;font-size:27px;letter-spacing:-.4px}.subtitle{margin:0;color:var(--muted);font-size:14px}
+.badge{background:var(--info-bg);color:#1557b8;border:1px solid #c9dcfb;padding:9px 13px;border-radius:10px;font-weight:700;font-size:13px;white-space:nowrap}
+.mode-tabs{display:flex;gap:8px;margin:0 0 20px;background:#e8edf5;padding:5px;border-radius:12px}.mode-tab{flex:0 0 auto;border:0;background:transparent;color:#344054;border-radius:9px;padding:11px 18px;font-weight:700;cursor:pointer;font-size:14px;transition:.18s}.mode-tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 6px rgba(23,105,224,.22)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:13px;margin-bottom:17px;overflow:hidden;box-shadow:var(--shadow)}
+.card-header{padding:15px 18px;border-bottom:1px solid #e8edf3;display:flex;justify-content:space-between;align-items:center;gap:12px}.card-header h2{font-size:17px;margin:0}.card-header p{margin:4px 0 0;color:var(--muted);font-size:12.5px}.card-body{padding:18px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-group{display:flex;flex-direction:column;gap:7px}label{font-size:12.5px;font-weight:700;color:#344054}input{width:100%;padding:11px 12px;border:1px solid #d4dce7;border-radius:8px;font-size:14px;outline:none;background:#fff;color:var(--text);transition:.15s}input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #dbeafe}input::placeholder{color:#98a2b3}
+.items-wrap{overflow-x:auto}table{width:100%;border-collapse:separate;border-spacing:0;min-width:850px;border:1px solid #e2e8f0;border-radius:9px;overflow:hidden}th,td{padding:10px;border-bottom:1px solid #e7ecf2;text-align:left;vertical-align:middle}tr:last-child td{border-bottom:0}th{font-size:11.5px;color:#475467;background:#f7f9fc}td{font-size:13px}td input{padding:9px 10px}.col-num{width:45px;text-align:center}.col-code{width:145px}.col-qty{width:120px}.col-value,.col-total{width:150px}.col-action{width:65px;text-align:center}
+.total-box{margin-top:15px;display:flex;justify-content:flex-end}.total{min-width:290px;background:var(--success-bg);border:1px solid #bdebd5;border-radius:10px;padding:12px 16px}.total-label{font-size:11.5px;color:#16704e}.total-value{font-size:23px;font-weight:800;color:#087a50;margin-top:3px}
+button{border:0;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer;font-size:13.5px;transition:.16s}button:disabled{opacity:.55;cursor:not-allowed}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover:not(:disabled){background:var(--primary-dark)}.btn-secondary{background:#eef2f7;color:#344054}.btn-secondary:hover:not(:disabled){background:#e3e9f2}.btn-danger{background:var(--danger-bg);color:var(--danger);padding:9px 11px}.btn-add{background:#eef4ff;color:#1457b8;border:1px solid #c9dcfb}.actions{display:flex;gap:9px;flex-wrap:wrap}.status{margin-top:12px;padding:11px 13px;border-radius:8px;font-size:13px;display:none}.status.success{display:block;background:var(--success-bg);color:#166534;border:1px solid #bbf7d0}.status.error{display:block;background:var(--danger-bg);color:#991b1b;border:1px solid #fecaca}.footer-note{font-size:11.5px;color:var(--muted);margin-top:9px}
+.xml-preview{margin:0;background:#17202d;color:#d7dee9;border-radius:9px;padding:16px;overflow:auto;white-space:pre;font:12px/1.55 Consolas,"Courier New",monospace;min-height:260px;max-height:600px}.file-input{width:100%;padding:12px;border:1px dashed #aeb9c8;border-radius:9px;background:#f8fafc}.dev-guide{margin-bottom:12px;padding:12px 14px;border:1px solid #cfe0f8;background:#f5f9ff;color:#31557f;border-radius:9px;font-size:13px;line-height:1.55}.dev-summary{margin-top:13px;padding:13px 14px;border-radius:9px;background:#f5f7fa;line-height:1.65}.dev-summary strong{font-weight:700}.dev-summary .line{margin:2px 0}.dev-code{font-family:monospace}.dev-check{width:18px;height:18px}.dev-qty{max-width:120px}.dev-total{font-weight:700;white-space:nowrap}
+.footer{border-top:1px solid #dfe6ef;background:#fff}.footer-inner{max-width:1280px;margin:auto;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;color:#667085;font-size:12px}.footer-brand{color:#344054}.footer-by{color:#344054}.footer-by strong{font-weight:700;color:#172033}
+@media(max-width:760px){.container{padding:18px 12px 28px}.header{align-items:flex-start;flex-direction:column}.badge{white-space:normal}.form-grid{grid-template-columns:1fr}.brand-copy h1{font-size:23px}.mode-tabs{flex-direction:column}.mode-tab{width:100%}.total{width:100%;min-width:0}.footer-inner{padding:13px 12px;flex-direction:column;align-items:flex-start;gap:6px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 5h15l9 9v29H14c-2.2 0-4-1.8-4-4V9c0-2.2 1.8-4 4-4Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M29 5v10h9M17 24h18M17 31h18M17 17h6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <h1>Gerador de NF-e</h1>
+        <p class="subtitle">Gere, visualize e baixe o XML de forma simples e rápida.</p>
+      </div>
+    </div>
+    <div class="badge">Para Homologação</div>
+  </div>
+
+  <div class="mode-tabs">
+    <button type="button" class="mode-tab active" id="tabVenda">🧾 NF-e de Venda</button>
+    <button type="button" class="mode-tab" id="tabDevolucao">↩️ NF-e de Devolução</button>
+  </div>
+
+  <div id="vendaMode">
+
+  <section class="card">
+    <div class="card-header"><div><h2>Dados da NF-e</h2><p>Informe o número que deseja utilizar na nota.</p></div></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nNF">Número da NF-e *</label>
+          <input id="nNF" type="number" min="1" max="999999999" step="1" placeholder="Ex.: 2240">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><div><h2>Emitente</h2><p>Informe os dados que serão alterados no XML.</p></div></div>
+    <div class="card-body"><div class="form-grid">
+      <div class="form-group"><label for="emitCnpj">CNPJ *</label><input id="emitCnpj" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
+      <div class="form-group"><label for="emitNome">Nome / Razão Social *</label><input id="emitNome" placeholder="Nome do emitente"></div>
+    </div></div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><div><h2>Destinatário</h2><p>Informe os dados que serão alterados no XML.</p></div></div>
+    <div class="card-body"><div class="form-grid">
+      <div class="form-group"><label for="destCnpj">CNPJ *</label><input id="destCnpj" inputmode="numeric" placeholder="00.000.000/0000-00"></div>
+      <div class="form-group"><label for="destNome">Nome / Razão Social *</label><input id="destNome" placeholder="Nome do destinatário"></div>
+    </div></div>
+  </section>
+
+  <section class="card">
+    <div class="card-header">
+      <div><h2>Itens da NF-e</h2><p>Quantidade × valor unitário = valor total do item.</p></div>
+      <button type="button" class="btn-add" id="addItem">＋ Adicionar Item</button>
+    </div>
+    <div class="card-body">
+      <div class="items-wrap">
+        <table>
+          <thead><tr><th class="col-num">#</th><th class="col-code">Código (cProd)</th><th class="col-qty">Quantidade</th><th>Descrição</th><th class="col-value">Valor Unitário (R$)</th><th class="col-total">Valor Total (R$)</th><th class="col-action">Ações</th></tr></thead>
+          <tbody id="itemsBody"></tbody>
+        </table>
+      </div>
+      <div class="total-box"><div class="total"><div class="total-label">Valor total da NF-e</div><div class="total-value" id="grandTotal">R$ 0,00</div></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header"><div><h2>Geração</h2><p>Gere o XML, confira o conteúdo e depois faça o download.</p></div></div>
+    <div class="card-body">
+      <div class="actions">
+        <button type="button" class="btn-secondary" id="clearAll">Limpar Dados</button>
+        <button type="button" class="btn-primary" id="generate">⚙ Gerar XML</button>
+        <button type="button" class="btn-primary" id="download" disabled>⬇ Baixar XML</button>
+      </div>
+      <div id="status" class="status" aria-live="polite"></div>
+      <div class="footer-note">Nome do arquivo: <strong>NFe_Homologacao_001.xml</strong></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header">
+      <div><h2>Pré-visualização do XML</h2><p>O XML gerado aparecerá abaixo.</p></div>
+      <button type="button" class="btn-secondary" id="copy" disabled>Copiar XML</button>
+    </div>
+    <div class="card-body"><pre class="xml-preview" id="xmlPreview">Nenhum XML gerado ainda.</pre></div>
+  </section>
+</div>
+
+  <div id="devolucaoMode" style="display:none">
+
+    <section class="card">
+      <div class="card-header"><div><h2>NF-e original</h2><p>Insira o XML da nota fiscal de venda para gerarmos a nota de devolução.</p></div></div>
+      <div class="card-body">
+        <div class="dev-guide">Insira o XML da nota fiscal de venda. Vamos identificar os dados da NF-e e os itens disponíveis para você selecionar o que será devolvido.</div>
+        <input id="devFile" type="file" accept=".xml,text/xml,application/xml" class="file-input">
+        <div id="devOriginal" class="dev-summary">Nenhuma NF-e carregada.</div>
+      </div>
+    </section>
+
+    <section class="card" id="devDataCard" style="display:none">
+      <div class="card-header"><div><h2>Dados da devolução</h2><p>Confira os dados e informe o número da nova NF-e.</p></div></div>
+      <div class="card-body"><div class="form-grid">
+        <div class="form-group"><label for="devNNF">Número da NF-e de devolução *</label><input id="devNNF" type="number" min="1" max="999999999" step="1" placeholder="Ex.: 3001"></div>
+        <div class="form-group"><label for="devNatOp">Natureza da operação</label><input id="devNatOp" value="Devolução de mercadoria"></div>
+      </div></div>
+    </section>
+
+    <section class="card" id="devItemsCard" style="display:none">
+      <div class="card-header"><div><h2>Itens da devolução</h2><p>Marque os itens e informe a quantidade que será devolvida.</p></div></div>
+      <div class="card-body">
+        <div class="items-wrap"><table><thead><tr><th>Devolver</th><th>Código</th><th>Descrição</th><th>Qtd. original</th><th>Qtd. devolvida</th><th>Valor unitário</th><th>Total</th></tr></thead><tbody id="devItemsBody"></tbody></table></div>
+        <div class="total-box"><div class="total"><div class="total-label">Valor total da devolução</div><div class="total-value" id="devGrandTotal">R$ 0,00</div></div></div>
+      </div>
+    </section>
+
+    <section class="card" id="devGenerateCard" style="display:none">
+      <div class="card-header"><div><h2>Geração</h2><p>Gere o XML, confira o conteúdo e depois faça o download.</p></div></div>
+      <div class="card-body"><div class="actions">
+        <button type="button" class="btn-secondary" id="devClear">Limpar</button>
+        <button type="button" class="btn-primary" id="devGenerate">⚙ Gerar XML de Devolução</button>
+        <button type="button" class="btn-primary" id="devDownload" disabled>⬇ Baixar XML</button>
+      </div><div id="devStatus" class="status"></div><div class="footer-note">Nome do arquivo: <strong>NFe_Devolucao_Homologacao_001.xml</strong></div></div>
+    </section>
+
+    <section class="card" id="devPreviewCard" style="display:none"><div class="card-header"><div><h2>Pré-visualização do XML</h2></div><button type="button" class="btn-secondary" id="devCopy" disabled>Copiar XML</button></div><div class="card-body"><pre class="xml-preview" id="devXmlPreview">Nenhum XML gerado ainda.</pre></div></section>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">Gerador de NF-e - Homologação&nbsp;&nbsp;|&nbsp;&nbsp;Desenvolvido para facilitar o seu dia a dia</div>
+    <div class="footer-by">By: <strong>LagaMBa</strong></div>
+  </div>
+</footer>
+
+<script>
+const BASE_XML = `<nfeProc versao="4.00" xmlns="http://www.portalfiscal.inf.br/nfe">
+	<NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+		<infNFe versao="4.00" Id="NFe35240434499567000680550010000022401338979625">
+			<ide>
+				<cUF>35</cUF>
+				<cNF>33897962</cNF>
+				<natOp>Venda Pecas tributado - Nao Contribuinte</natOp>
+				<mod>55</mod>
+				<serie>1</serie>
+				<nNF>2240</nNF>
+				<dhEmi>2024-04-04T14:18:44-03:00</dhEmi>
+				<tpNF>1</tpNF>
+				<idDest>2</idDest>
+				<cMunFG>3503208</cMunFG>
+				<tpImp>1</tpImp>
+				<tpEmis>1</tpEmis>
+				<cDV>5</cDV>
+				<tpAmb>1</tpAmb>
+				<finNFe>1</finNFe>
+				<indFinal>1</indFinal>
+				<indPres>9</indPres>
+				<indIntermed>0</indIntermed>
+				<procEmi>0</procEmi>
+				<verProc>NBS 01.013</verProc>
+			</ide>
+			<emit>
+				<CNPJ>22266356000104</CNPJ>
+				<xNome>Fornecedora Treinamento</xNome>
+				<xFant>Fornecedora Treinamento</xFant>
+				<enderEmit>
+					<xLgr>AV ALBERTO SANTOS DUMONT</xLgr>
+					<nro>111</nro>
+					<xBairro>JARDIM HIGIENOPOLIS</xBairro>
+					<cMun>3503208</cMun>
+					<xMun>ARARAQUARA</xMun>
+					<UF>SP</UF>
+					<CEP>14807234</CEP>
+					<cPais>1058</cPais>
+					<xPais>BRASIL</xPais>
+					<fone>1132284848</fone>
+				</enderEmit>
+				<IE>181603030113</IE>
+				<IM>1376930</IM>
+				<CNAE>4511102</CNAE>
+				<CRT>3</CRT>
+			</emit>
+			<dest>
+				<CNPJ>12317385000102</CNPJ>
+				<xNome>Seguradora Treinamento</xNome>
+				<enderDest>
+					<xLgr>AV CENTO E TRINTA E SEIS</xLgr>
+					<nro>907</nro>
+					<xCpl>QD  F44  LOTE 2/4/14</xCpl>
+					<xBairro>SETOR SUL</xBairro>
+					<cMun>5208707</cMun>
+					<xMun>GOIANIA</xMun>
+					<UF>GO</UF>
+					<CEP>74093250</CEP>
+					<cPais>1058</cPais>
+					<xPais>BRASIL</xPais>
+					<fone>1199999999</fone>
+				</enderDest>
+				<indIEDest>9</indIEDest>
+				<email>rodrigo.forte@cbautoshonda.com.br</email>
+			</dest>
+			<det nItem="1">
+				<prod>
+					<cProd>921011S000</cProd>
+					<cEAN>SEM GTIN</cEAN>
+					<xProd>FAROL ESQUERDO</xProd>
+					<NCM>84149020</NCM>
+					<CFOP>6108</CFOP>
+					<uCom>PC</uCom>
+					<qCom>1.0000</qCom>
+					<vUnCom>1289.92</vUnCom>
+					<vProd>1289.92</vProd>
+					<cEANTrib>SEM GTIN</cEANTrib>
+					<uTrib>PC</uTrib>
+					<qTrib>1.0000</qTrib>
+					<vUnTrib>1289.92</vUnTrib>
+					<vDesc>0</vDesc>
+					<indTot>1</indTot>
+				</prod>
+				<imposto>
+					<ICMS>
+						<ICMS00>
+							<orig>0</orig>
+							<CST>00</CST>
+							<modBC>3</modBC>
+							<vBC>605.79</vBC>
+							<pICMS>7.0000</pICMS>
+							<vICMS>42.41</vICMS>
+						</ICMS00>
+					</ICMS>
+					<PIS>
+						<PISNT>
+							<CST>04</CST>
+						</PISNT>
+					</PIS>
+					<COFINS>
+						<COFINSNT>
+							<CST>04</CST>
+						</COFINSNT>
+					</COFINS>
+					<ICMSUFDest>
+						<vBCUFDest>605.79</vBCUFDest>
+						<vBCFCPUFDest>605.79</vBCFCPUFDest>
+						<pFCPUFDest>0.00</pFCPUFDest>
+						<pICMSUFDest>19.00</pICMSUFDest>
+						<pICMSInter>7.00</pICMSInter>
+						<pICMSInterPart>100.00</pICMSInterPart>
+						<vFCPUFDest>0.00</vFCPUFDest>
+						<vICMSUFDest>72.69</vICMSUFDest>
+						<vICMSUFRemet>0.00</vICMSUFRemet>
+					</ICMSUFDest>
+				</imposto>
+			</det>
+			<det nItem="2">
+				<prod>
+					<cProd>865241S000</cProd>
+					<cEAN>SEM GTIN</cEAN>
+					<xProd>GRADE DIR DO PARACHOQUE DIANT</xProd>
+					<NCM>84149020</NCM>
+					<CFOP>6108</CFOP>
+					<uCom>PC</uCom>
+					<qCom>1.0000</qCom>
+					<vUnCom>115.00</vUnCom>
+					<vProd>115.00</vProd>
+					<cEANTrib>SEM GTIN</cEANTrib>
+					<uTrib>PC</uTrib>
+					<qTrib>1.0000</qTrib>
+					<vUnTrib>115.00</vUnTrib>
+					<vDesc>0</vDesc>
+					<indTot>1</indTot>
+				</prod>
+				<imposto>
+					<ICMS>
+						<ICMS00>
+							<orig>0</orig>
+							<CST>00</CST>
+							<modBC>3</modBC>
+							<vBC>620.34</vBC>
+							<pICMS>7.0000</pICMS>
+							<vICMS>43.42</vICMS>
+						</ICMS00>
+					</ICMS>
+					<PIS>
+						<PISNT>
+							<CST>04</CST>
+						</PISNT>
+					</PIS>
+					<COFINS>
+						<COFINSNT>
+							<CST>04</CST>
+						</COFINSNT>
+					</COFINS>
+					<ICMSUFDest>
+						<vBCUFDest>620.34</vBCUFDest>
+						<vBCFCPUFDest>620.34</vBCFCPUFDest>
+						<pFCPUFDest>0.00</pFCPUFDest>
+						<pICMSUFDest>19.00</pICMSUFDest>
+						<pICMSInter>7.00</pICMSInter>
+						<pICMSInterPart>100.00</pICMSInterPart>
+						<vFCPUFDest>0.00</vFCPUFDest>
+						<vICMSUFDest>74.44</vICMSUFDest>
+						<vICMSUFRemet>0.00</vICMSUFRemet>
+					</ICMSUFDest>
+				</imposto>
+			</det>
+			<total>
+				<ICMSTot>
+					<vBC>1404.92</vBC>
+					<vICMS>85.83</vICMS>
+					<vICMSDeson>0.00</vICMSDeson>
+					<vICMSUFDest>147.13</vICMSUFDest>
+					<vFCP>0.00</vFCP>
+					<vBCST>0.00</vBCST>
+					<vST>0.00</vST>
+					<vFCPST>0.00</vFCPST>
+					<vFCPSTRet>0.00</vFCPSTRet>
+					<qBCMonoRet>0.00</qBCMonoRet>
+					<vICMSMonoRet>0.00</vICMSMonoRet>
+					<vProd>1290.66</vProd>
+					<vFrete>0.00</vFrete>
+					<vSeg>0.00</vSeg>
+					<vDesc>64.53</vDesc>
+					<vII>0.00</vII>
+					<vIPI>0.00</vIPI>
+					<vIPIDevol>0.00</vIPIDevol>
+					<vPIS>0.00</vPIS>
+					<vCOFINS>0.00</vCOFINS>
+					<vOutro>0.00</vOutro>
+					<vNF>1404.92</vNF>
+				</ICMSTot>
+			</total>
+			<transp>
+				<modFrete>0</modFrete>
+				<transporta>
+					<CNPJ>44914992000138</CNPJ>
+					<xNome>RODONAVES TRANSPORTES E ENCOME</xNome>
+					<IE>582249216111</IE>
+					<xEnder>R GAL AUGUSTO SOARES DOS SANTO</xEnder>
+					<xMun>RIBEIRAO PRETO</xMun>
+					<UF>SP</UF>
+				</transporta>
+				<vol>
+					<qVol>2</qVol>
+					<esp>VOLUMES</esp>
+				</vol>
+			</transp>
+			<cobr>
+				<fat>
+					<nFat>FA-2240</nFat>
+					<vOrig>1404.92</vOrig>
+					<vDesc>0.00</vDesc>
+					<vLiq>1404.92</vLiq>
+				</fat>
+				<dup>
+					<nDup>001</nDup>
+					<dVenc>2024-05-04</dVenc>
+					<vDup>1404.92</vDup>
+				</dup>
+			</cobr>
+			<pag>
+				<detPag>
+					<tPag>15</tPag>
+					<vPag>1404.92</vPag>
+				</detPag>
+			</pag>
+			<infAdic>
+				<infCpl>* Forma de Pagamento: Seguradora R$1.226,13 30 Dias *  SISTEMA PLANETUM SININSTRO 104202402275550  PLACA DYE4D49 CHASSI 93HRV2870KZ102907 LOCAL DE ENTREGA Oficina DISTRIBUIDORA SUDOESTE LTDA CNPJ/CPF 02606820000157 End Avenida Presidente Vargas, 145 Complemento Bairro Jardim Goias Cidade Rio Verde Estado GO CEP 75903290 Telefone 64 - 21018008 * * TPC-Tributado de Pis/Cofins, IPC-Isento de Pis/Cofins * Pre-Nota N.: 69312 * VENDEDOR: William Avila Moraes * Valor ICMS Interestadual para UF de destino R$147,13</infCpl>
+			</infAdic>
+			<infRespTec>
+				<CNPJ>02348447000181</CNPJ>
+				<xContato>GERSON DA COSTA TEIXEIRA</xContato>
+				<email>gerson@nbsi.com.br</email>
+				<fone>6521284300</fone>
+			</infRespTec>
+		</infNFe>
+		<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+			<SignedInfo>
+				<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+				<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+				<Reference URI="#NFe35240434499567000680550010000022401338979625">
+					<Transforms>
+						<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+						<Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+					</Transforms>
+					<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+					<DigestValue>VffhHwMDhtRA4H7YTzLdKrN3kXY=</DigestValue>
+				</Reference>
+			</SignedInfo>
+			<SignatureValue>T00in0/5H+RZii7+sAlUF/tUesQfSkOkfbuXQgQL6N0i4/Z64pvV+TjlEJGYEwIxJKG7e4gykRA2YpnEsN9T/fx1ADczassalOi7WVP09AAGMGArPFSmGeLdJf9J9xyn/l+1zEhfEJSfaMvHDKAHtO9FxH4ZHsMUqgdLqbGUu9faNQofMBrDDHR8pAYLHnBzwctdf0puM7VSQePRuNCGsev0iLfNfWiZzVJva1tIuiottAVsO0TeasN+cx+azxk/gojO29sa56o8S0iwuAU3ybblzLPWJqxT1ovso6NfvatNcFpft3+FGvwwMu1rC5KaGjG1v62Y3NGmr/Aj8mA3Gw==</SignatureValue>
+			<KeyInfo>
+				<X509Data>
+					<X509Certificate>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</X509Certificate>
+				</X509Data>
+			</KeyInfo>
+		</Signature>
+	</NFe>
+	<protNFe versao="4.00">
+		<infProt Id="Id135240704504022">
+			<tpAmb>1</tpAmb>
+			<verAplic>SP_NFE_PL009_V4</verAplic>
+			<chNFe>35240434499567000680550010000022401338979625</chNFe>
+			<dhRecbto>2024-04-04T14:19:09-03:00</dhRecbto>
+			<nProt>135240704504022</nProt>
+			<digVal>VffhHwMDhtRA4H7YTzLdKrN3kXY=</digVal>
+			<cStat>100</cStat>
+			<xMotivo>Autorizado o uso da NF-e</xMotivo>
+		</infProt>
+	</protNFe>
+</nfeProc>`;
+
+const state={items:[],generatedXml:""};
+const $=id=>document.getElementById(id);
+
+function parseNumber(v){
+  let s=String(v??"").trim().replace(/\s/g,"");
+  if(!s)return 0;
+  if(s.includes(",")&&s.includes(".")){s=s.lastIndexOf(",")>s.lastIndexOf(".")?s.replace(/\./g,"").replace(",","."):s.replace(/,/g,"")}
+  else if(s.includes(","))s=s.replace(",",".");
+  const n=Number(s);return Number.isFinite(n)?n:0;
+}
+function money(n){return Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function xmlMoney(n){return Number(n||0).toFixed(2)}
+function xmlQty(n){return Number(n||0).toFixed(4)}
+function digits(v){return String(v||"").replace(/\D/g,"")}
+function child(parent,name){return Array.from(parent.children).find(e=>e.localName===name)}
+function get(parent,name){const n=child(parent,name);return n?n.textContent:""}
+function set(parent,name,value){const n=child(parent,name);if(n)n.textContent=String(value??"")}
+function status(msg,type){const e=$("status");e.textContent=msg;e.className="status "+type}
+
+function renderItems(){
+  const body=$("itemsBody");body.innerHTML="";
+  state.items.forEach((item,i)=>{
+    const tr=document.createElement("tr");
+    const num=document.createElement("td");num.className="col-num";num.textContent=i+1;
+    const cd=document.createElement("td");const c=document.createElement("input");
+    c.type="text";c.value=item.code;c.placeholder="Código do item (cProd)";c.addEventListener("input",()=>item.code=c.value);cd.appendChild(c);
+    const qd=document.createElement("td");const q=document.createElement("input");
+    q.type="number";q.min=".0001";q.step=".0001";q.placeholder="Quantidade";q.value=item.qty ?? "";
+    q.addEventListener("input",()=>{item.qty=q.value===""?"":Math.max(0,parseNumber(q.value));updateSaleTotals()});qd.appendChild(q);
+    const dd=document.createElement("td");const d=document.createElement("input");
+    d.type="text";d.value=item.desc;d.placeholder="Descrição do produto";d.addEventListener("input",()=>item.desc=d.value);dd.appendChild(d);
+    const ud=document.createElement("td");const u=document.createElement("input");
+    u.type="text";u.inputMode="decimal";u.placeholder="0,00";u.value=item.unit===""?"":money(item.unit);
+    u.addEventListener("input",()=>{
+      const raw=u.value;
+      const parsed=parseNumber(raw);
+      item.unit=raw.trim()===""?"":Math.max(0,parsed);
+      const tdTotal=tr.querySelector(".col-total");
+      if(tdTotal)tdTotal.textContent="R$ "+money((parseNumber(item.qty)||0)*(parseNumber(item.unit)||0));
+      updateSaleTotals();
+    });
+    u.addEventListener("blur",()=>{u.value=item.unit===""?"":money(item.unit)});
+    ud.appendChild(u);
+    const td=document.createElement("td");td.className="col-total";td.textContent="R$ "+money((parseNumber(item.qty)||0)*(parseNumber(item.unit)||0));
+    const ad=document.createElement("td");ad.className="col-action";const del=document.createElement("button");
+    del.type="button";del.className="btn-danger";del.textContent="🗑";del.title="Excluir item";
+    del.addEventListener("click",()=>{state.items.splice(i,1);renderItems()});ad.appendChild(del);
+    tr.append(num,cd,qd,dd,ud,td,ad);body.appendChild(tr);
+  });
+  updateSaleTotals();
+}
+
+function updateSaleTotals(){
+  const sum=state.items.reduce((s,x)=>s+(parseNumber(x.qty)||0)*(parseNumber(x.unit)||0),0);
+  $("grandTotal").textContent="R$ "+money(sum);
+}
+
+function initialItems(){
+  const doc=new DOMParser().parseFromString(BASE_XML,"application/xml");
+  const ns="http://www.portalfiscal.inf.br/nfe";
+  // A estrutura fiscal continua vindo do XML base, mas os campos dos itens
+  // ficam vazios para o usuário preencher a cada nova NF-e.
+  const baseItems=Array.from(doc.getElementsByTagNameNS(ns,"det"));
+  state.items=Array.from({length:Math.max(2,baseItems.length)},()=>({code:"",qty:"",desc:"",unit:""}));
+  renderItems();
+}
+
+function zeroFiscal(det){
+  ["vBC","vICMS","vBCUFDest","vBCFCPUFDest","vFCPUFDest","vICMSUFDest","vICMSUFRemet","vFCP","vBCST","vST","vFCPST","vFCPSTRet","qBCMonoRet","vICMSMonoRet","vIPI","vIPIDevol","vPIS","vCOFINS"]
+  .forEach(tag=>Array.from(det.getElementsByTagNameNS("*",tag)).forEach(n=>n.textContent="0.00"));
+}
+
+function formatXml(xml){
+  return xml.replace(/(>)(<)(\/*)/g,"$1\n$2$3").split("\n").map(l=>l.trim()).filter(Boolean).join("\n");
+}
+
+function buildXml(){
+  const nNF=Number.parseInt($("nNF").value,10);
+  const ec=digits($("emitCnpj").value),dc=digits($("destCnpj").value);
+  const en=$("emitNome").value.trim(),dn=$("destNome").value.trim();
+
+  if(!Number.isInteger(nNF)||nNF<1||nNF>999999999)throw Error("Informe um número de NF-e válido.");
+  if(ec.length!==14)throw Error("Informe o CNPJ do emitente com 14 dígitos.");
+  if(dc.length!==14)throw Error("Informe o CNPJ do destinatário com 14 dígitos.");
+  if(!en)throw Error("Informe o nome do emitente.");
+  if(!dn)throw Error("Informe o nome do destinatário.");
+  if(!state.items.length)throw Error("Adicione pelo menos um item.");
+
+  state.items.forEach((x,i)=>{
+    if(!x.code.trim())throw Error("Informe o código (cProd) do item "+(i+1)+".");
+    if(!(x.qty>0))throw Error("A quantidade do item "+(i+1)+" deve ser maior que zero.");
+    if(!x.desc.trim())throw Error("Informe a descrição do item "+(i+1)+".");
+    if(x.unit<0)throw Error("O valor do item "+(i+1)+" não pode ser negativo.");
+  });
+
+  const parser=new DOMParser(),doc=parser.parseFromString(BASE_XML,"application/xml");
+  if(doc.getElementsByTagName("parsererror").length)throw Error("Não foi possível ler o XML base.");
+  const ns="http://www.portalfiscal.inf.br/nfe",inf=doc.getElementsByTagNameNS(ns,"infNFe")[0];
+  const emit=doc.getElementsByTagNameNS(ns,"emit")[0],dest=doc.getElementsByTagNameNS(ns,"dest")[0],ide=doc.getElementsByTagNameNS(ns,"ide")[0];
+  if(!inf||!emit||!dest||!ide)throw Error("A estrutura esperada da NF-e não foi encontrada.");
+
+  set(ide,"nNF",nNF);set(emit,"CNPJ",ec);set(emit,"xNome",en);set(emit,"xFant",en);set(dest,"CNPJ",dc);set(dest,"xNome",dn);
+
+  const old=Array.from(inf.children).filter(e=>e.localName==="det"),total=Array.from(inf.children).find(e=>e.localName==="total");
+  const template=old[0]?old[0].cloneNode(true):null;
+  if(!template)throw Error("Não foi encontrado um item modelo no XML base.");
+  old.forEach(e=>inf.removeChild(e));
+
+  state.items.forEach((item,i)=>{
+    const det=template.cloneNode(true);det.setAttribute("nItem",String(i+1));
+    const prod=child(det,"prod");if(!prod)throw Error("Estrutura de produto não encontrada.");
+    set(prod,"cProd",item.code);set(prod,"qCom",xmlQty(item.qty));set(prod,"vUnCom",xmlMoney(item.unit));set(prod,"vProd",xmlMoney(item.qty*item.unit));
+    set(prod,"qTrib",xmlQty(item.qty));set(prod,"vUnTrib",xmlMoney(item.unit));set(prod,"xProd",item.desc);
+    zeroFiscal(det);inf.insertBefore(det,total);
+  });
+
+  const sum=state.items.reduce((s,x)=>s+x.qty*x.unit,0);
+  const icms=total&&child(total,"ICMSTot");
+  if(icms){
+    ["vBC","vICMS","vICMSDeson","vICMSUFDest","vFCP","vBCST","vST","vFCPST","vFCPSTRet","qBCMonoRet","vICMSMonoRet","vFrete","vSeg","vDesc","vII","vIPI","vIPIDevol","vPIS","vCOFINS","vOutro"].forEach(t=>{const n=child(icms,t);if(n)n.textContent="0.00"});
+    set(icms,"vProd",xmlMoney(sum));set(icms,"vNF",xmlMoney(sum));
+  }
+
+  // Signature permanece intocada, incluindo SignatureValue e X509Certificate.
+  return formatXml(new XMLSerializer().serializeToString(doc));
+}
+
+function generate(){
+  try{
+    state.generatedXml=buildXml();$("xmlPreview").textContent=state.generatedXml;
+    $("download").disabled=false;$("copy").disabled=false;
+    status("XML gerado com sucesso. Confira o conteúdo antes de baixar.","success");
+  }catch(e){state.generatedXml="";$("download").disabled=true;$("copy").disabled=true;status(e.message,"error")}
+}
+function downloadXml(){
+  if(!state.generatedXml)return;
+  const blob=new Blob([state.generatedXml],{type:"application/xml;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="NFe_Homologacao_001.xml";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+async function copyXml(){
+  if(!state.generatedXml)return;
+  try{
+    if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(state.generatedXml);
+    else{const t=document.createElement("textarea");t.value=state.generatedXml;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}
+    status("XML copiado para a área de transferência.","success");
+  }catch{status("Não foi possível copiar automaticamente o XML.","error")}
+}
+function clearAll(){
+  ["nNF","emitCnpj","emitNome","destCnpj","destNome"].forEach(id=>$(id).value="");
+  state.items=[];state.generatedXml="";renderItems();
+  $("xmlPreview").textContent="Nenhum XML gerado ainda.";$("download").disabled=true;$("copy").disabled=true;
+  $("status").className="status";$("status").textContent="";
+  state.items=Array.from({length:2},()=>({code:"",qty:"",desc:"",unit:""}));renderItems();
+}
+
+$("addItem").addEventListener("click",()=>{state.items.push({code:"",qty:"",desc:"",unit:""});renderItems()});
+$("generate").addEventListener("click",generate);$("download").addEventListener("click",downloadXml);
+$("copy").addEventListener("click",copyXml);$("clearAll").addEventListener("click",clearAll);
+initialItems();
+
+
+// ===== MÓDULO DE DEVOLUÇÃO =====
+const devState={doc:null,items:[],xml:"",originalName:""};
+function devSetStatus(msg,type){const e=$("devStatus");e.textContent=msg;e.className="status "+(type||"")}
+function devNode(parent,name){return Array.from(parent.children).find(e=>e.localName===name)}
+function devText(parent,name){const n=devNode(parent,name);return n?n.textContent:""}
+function devRenderSummary(){
+  const box=$("devOriginal"), d=devState.doc;
+  if(!d){box.textContent="Nenhuma NF-e carregada.";return}
+  const ns="http://www.portalfiscal.inf.br/nfe",inf=d.getElementsByTagNameNS(ns,"infNFe")[0],ide=d.getElementsByTagNameNS(ns,"ide")[0],emit=d.getElementsByTagNameNS(ns,"emit")[0],dest=d.getElementsByTagNameNS(ns,"dest")[0];
+  const chave=(inf?.getAttribute("Id")||"").replace(/^NFe/,"");
+  box.innerHTML=`<div class="line"><strong>NF-e:</strong> ${devText(ide,"nNF")} &nbsp; <strong>Série:</strong> ${devText(ide,"serie")}</div><div class="line"><strong>Chave:</strong> <span class="dev-code">${chave||"não encontrada"}</span></div><div class="line"><strong>Emitente:</strong> ${devText(emit,"xNome")} (${devText(emit,"CNPJ")})</div><div class="line"><strong>Destinatário:</strong> ${devText(dest,"xNome")} (${devText(dest,"CNPJ")})</div>`;
+}
+function devRenderItems(){
+ const body=$("devItemsBody");body.innerHTML="";
+ devState.items.forEach((x,i)=>{const tr=document.createElement("tr");
+  const td0=document.createElement("td");const ck=document.createElement("input");ck.type="checkbox";ck.className="dev-check";ck.checked=x.selected;ck.addEventListener("change",()=>{x.selected=ck.checked;devRenderItems()});td0.appendChild(ck);
+  const td1=document.createElement("td");td1.textContent=x.code;
+  const td2=document.createElement("td");td2.textContent=x.desc;
+  const td3=document.createElement("td");td3.textContent=money(x.origQty);
+  const td4=document.createElement("td");const q=document.createElement("input");q.type="text";q.inputMode="decimal";q.className="dev-qty";q.value=x.selectedQty?String(x.selectedQty).replace('.',','):"0";q.disabled=!x.selected;q.addEventListener("input",()=>{x.qty=parseNumber(q.value);devUpdateTotals()});q.addEventListener("blur",()=>{q.value=x.selectedQty?String(x.selectedQty).replace('.',','):"0"});td4.appendChild(q);
+  const td5=document.createElement("td");td5.textContent="R$ "+money(x.unit);
+  const td6=document.createElement("td");td6.className="dev-total";td6.textContent="R$ "+money(x.selectedQty*x.unit);
+  tr.append(td0,td1,td2,td3,td4,td5,td6);body.appendChild(tr);
+ });devUpdateTotals();
+}
+function devUpdateTotals(){let sum=0;devState.items.forEach(x=>{if(x.selected){x.selectedQty=Math.max(0,Math.min(x.qty||0,x.origQty));sum+=x.selectedQty*x.unit}});$("devGrandTotal").textContent="R$ "+money(sum);}
+function devLoad(text){
+ const doc=new DOMParser().parseFromString(text,"application/xml");
+ if(doc.getElementsByTagName("parsererror").length)throw Error("O arquivo selecionado não é um XML válido.");
+ const ns="http://www.portalfiscal.inf.br/nfe",inf=doc.getElementsByTagNameNS(ns,"infNFe")[0];
+ if(!inf)throw Error("O XML não contém uma NF-e válida (infNFe não encontrado).");
+ const dets=Array.from(inf.children).filter(e=>e.localName==="det");
+ if(!dets.length)throw Error("A NF-e carregada não possui itens.");
+ devState.doc=doc;devState.xml="";devState.items=dets.map(det=>{const p=devNode(det,"prod");const qty=parseNumber(devText(p,"qCom"));return {det,code:devText(p,"cProd"),desc:devText(p,"xProd"),origQty:qty,qty:0,selectedQty:0,unit:parseNumber(devText(p,"vUnCom")),selected:false}});
+ const infId=inf.getAttribute("Id")||"";devState.originalName=infId.replace(/^NFe/,"");
+ devRenderSummary();devRenderItems();["devDataCard","devItemsCard","devGenerateCard"].forEach(id=>$(id).style.display="block");$("devPreviewCard").style.display="none";$("devNNF").value="";devSetStatus("XML carregado. Selecione os itens que serão devolvidos.","success");
+}
+async function devFileChange(e){const f=e.target.files[0];if(!f)return;try{devLoad(await f.text())}catch(err){devState.doc=null;devState.items=[];["devDataCard","devItemsCard","devGenerateCard","devPreviewCard"].forEach(id=>$(id).style.display="none");devSetStatus(err.message,"error")}}
+function devBuildXml(){
+ if(!devState.doc)throw Error("Carregue primeiro o XML da NF-e original.");
+ const nNF=Number.parseInt($("devNNF").value,10);if(!Number.isInteger(nNF)||nNF<1||nNF>999999999)throw Error("Informe um número de NF-e de devolução válido.");
+ const selected=devState.items.filter(x=>x.selected&&x.selectedQty>0);if(!selected.length)throw Error("Selecione pelo menos um item e informe a quantidade devolvida.");
+ const ns="http://www.portalfiscal.inf.br/nfe",doc=devState.doc.cloneNode(true),inf=doc.getElementsByTagNameNS(ns,"infNFe")[0],ide=doc.getElementsByTagNameNS(ns,"ide")[0],total=Array.from(inf.children).find(e=>e.localName==="total");
+ // Ajusta a operação para devolução, mantendo o restante da estrutura original.
+ set(ide,"nNF",nNF);set(ide,"natOp",$("devNatOp").value.trim()||"Devolução de mercadoria");set(ide,"tpNF","0");
+ const old=Array.from(inf.children).filter(e=>e.localName==="det"),template=old[0]?.cloneNode(true);if(!template)throw Error("Não foi encontrado item modelo.");old.forEach(e=>inf.removeChild(e));
+ selected.forEach((x,i)=>{const det=x.det.cloneNode(true);det.setAttribute("nItem",String(i+1));const p=devNode(det,"prod");set(p,"qCom",xmlQty(x.selectedQty));set(p,"vUnCom",xmlMoney(x.unit));set(p,"vProd",xmlMoney(x.selectedQty*x.unit));set(p,"qTrib",xmlQty(x.selectedQty));set(p,"vUnTrib",xmlMoney(x.unit));set(p,"CFOP",devText(devNode(x.det,"prod"),"CFOP"));zeroFiscal(det);inf.insertBefore(det,total)});
+ const sum=selected.reduce((s,x)=>s+x.selectedQty*x.unit,0),icms=total&&devNode(total,"ICMSTot");if(icms){["vBC","vICMS","vICMSDeson","vICMSUFDest","vFCP","vBCST","vST","vFCPST","vFCPSTRet","qBCMonoRet","vICMSMonoRet","vFrete","vSeg","vDesc","vII","vIPI","vIPIDevol","vPIS","vCOFINS","vOutro"].forEach(t=>{const n=devNode(icms,t);if(n)n.textContent="0.00"});set(icms,"vProd",xmlMoney(sum));set(icms,"vNF",xmlMoney(sum));}
+ // Referência à NF-e original: substitui o conteúdo existente por uma única referência.
+ const existingRef=Array.from(ide.children).filter(e=>e.localName==="NFref");existingRef.forEach(e=>ide.removeChild(e));
+ const ref=doc.createElementNS(ns,"NFref"),refNFe=doc.createElementNS(ns,"refNFe");refNFe.textContent=devState.originalName;ref.appendChild(refNFe);const idx=Array.from(ide.children).findIndex(e=>e.localName==="tpNF");ide.insertBefore(ref,ide.children[idx+1]||null);
+ return formatXml(new XMLSerializer().serializeToString(doc));
+}
+function devGenerate(){try{devState.xml=devBuildXml();$("devXmlPreview").textContent=devState.xml;$("devDownload").disabled=false;$("devCopy").disabled=false;$("devPreviewCard").style.display="block";devSetStatus("XML de devolução gerado com sucesso. Confira antes de baixar.","success")}catch(e){devState.xml="";$("devDownload").disabled=true;$("devCopy").disabled=true;devSetStatus(e.message,"error")}}
+function devDownload(){if(!devState.xml)return;const b=new Blob([devState.xml],{type:"application/xml;charset=utf-8"}),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download="NFe_Devolucao_Homologacao_001.xml";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)}
+async function devCopy(){if(!devState.xml)return;try{await navigator.clipboard.writeText(devState.xml);devSetStatus("XML copiado para a área de transferência.","success")}catch{devSetStatus("Não foi possível copiar automaticamente o XML.","error")}}
+function devClear(){devState.doc=null;devState.items=[];devState.xml="";$("devFile").value="";$("devOriginal").textContent="Nenhuma NF-e carregada.";["devDataCard","devItemsCard","devGenerateCard","devPreviewCard"].forEach(id=>$(id).style.display="none");devSetStatus("","")}
+function switchMode(mode){const venda=mode==="venda";$("vendaMode").style.display=venda?"block":"none";$("devolucaoMode").style.display=venda?"none":"block";$("tabVenda").classList.toggle("active",venda);$("tabDevolucao").classList.toggle("active",!venda)}
+$("tabVenda").addEventListener("click",()=>switchMode("venda"));$("tabDevolucao").addEventListener("click",()=>switchMode("devolucao"));$("devFile").addEventListener("change",devFileChange);$("devGenerate").addEventListener("click",devGenerate);$("devDownload").addEventListener("click",devDownload);$("devCopy").addEventListener("click",devCopy);$("devClear").addEventListener("click",devClear);
+
+</script>
+</body>
+</html>
